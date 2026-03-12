@@ -31,7 +31,7 @@ const SAMPLE_ITEMS = ["weekly prep plan", "organized grocery groups", "saved mea
 const REFERENCE_OBJECTS = ["prep block", "grocery lane", "meal board", "container checklist", "recipe slot"];
 const HERO_VISUAL = "/hero-scene.svg";
 const THUMBS = ["/thumb-1.svg", "/thumb-2.svg", "/thumb-3.svg"];
-const DOMAIN_CLASS = "meal-prep-atlas";
+const DOMAIN_CLASS: string = "meal-prep-atlas";
 const EMPTY_COLLECTION_TITLE = "Create the first prep block planner";
 const EMPTY_COLLECTION_DETAIL = "The prep block planner surface fills after the first successful run.";
 
