@@ -15,20 +15,25 @@ const APP_NAME = "Meal Prep Atlas";
 const TAGLINE = "Build a consumer meal-prep planner that turns a weekly grocery and cooking inspiration video into a prep schedule, groce";
 const FEATURE_CHIPS = ["prep block", "grocery lane", "meal board", "container checklist"];
 const PROOF_POINTS = ["weekly prep plan", "organized grocery groups", "saved meal board", "the first fold shows prep objects, not KPIs"];
-const SURFACE_LABELS = {"hero": "editorial production board", "workspace": "prep block", "result": "grocery lane", "support": "saved content batches", "collection": "hook card board"};
-const PLACEHOLDERS = {"query": "Content angle, audience, or campaign brief", "preferences": "Platforms, tone, cadence, and recording constraints"};
-const DEFAULT_STATS = [{"label": "weekly prep plan", "value": "4"}, {"label": "saved content batches", "value": "0"}, {"label": "Readiness score", "value": "88"}];
-const READY_TITLE = "assembling a multi-post creator batch live";
-const READY_DETAIL = "Show the system turning messy input into a usable meal prep and grocery planning assistant artifact in one pass. / assembling a multi-post creator batch live / turning a rough angle into a publish-ready workflow";
-const COLLECTION_TITLE = "Editorial Production Board stays visible after each run.";
-const SUPPORT_TITLE = "Saved Content Batches";
+const SURFACE_LABELS = {"hero": "kitchen prep atlas", "workspace": "prep block", "result": "grocery lane", "support": "saved meal boards", "collection": "prep block planner"};
+const PLACEHOLDERS = {"query": "Weekly cooking goal, diet, or meal prep brief", "preferences": "Household size, prep time, budget, and ingredients to use"};
+const DEFAULT_STATS = [{"label": "weekly prep plan", "value": "4"}, {"label": "prep block planner", "value": "0"}, {"label": "Readiness score", "value": "88"}];
+const READY_TITLE = "turning grocery inspiration into a prep board";
+const READY_DETAIL = "Show the system turning messy input into a usable meal prep and grocery planning assistant artifact in one pass. / turning grocery inspiration into a prep board / mapping a week of meals in one pass";
+const COLLECTION_TITLE = "Kitchen Prep Atlas stays visible after each run.";
+const SUPPORT_TITLE = "Saved Meal Boards";
 const REFERENCE_TITLE = "Meal Board";
-const BUTTON_LABEL = "Generate content batch";
+const BUTTON_LABEL = "Generate meal prep board";
 type LayoutKind = "storyboard" | "operations_console" | "studio" | "atlas" | "notebook" | "lab";
-const LAYOUT: LayoutKind = "storyboard";
-const UI_COPY_TONE = "creator-native and decisive";
-const SAMPLE_ITEMS = ["weekly prep plan", "organized grocery groups", "saved meal board", "Hook variant"];
-const REFERENCE_OBJECTS = ["prep block", "grocery lane", "meal board", "container checklist", "hook card"];
+const LAYOUT: LayoutKind = "atlas";
+const UI_COPY_TONE = "practical and encouraging";
+const SAMPLE_ITEMS = ["weekly prep plan", "organized grocery groups", "saved meal board", "Sunday prep block"];
+const REFERENCE_OBJECTS = ["prep block", "grocery lane", "meal board", "container checklist", "recipe slot"];
+const HERO_VISUAL = "/hero-scene.svg";
+const THUMBS = ["/thumb-1.svg", "/thumb-2.svg", "/thumb-3.svg"];
+const DOMAIN_CLASS = "meal-prep-atlas";
+const EMPTY_COLLECTION_TITLE = "Create the first prep block planner";
+const EMPTY_COLLECTION_DETAIL = "The prep block planner surface fills after the first successful run.";
 
 type PlanItem = { title: string; detail: string; score: number };
 type InsightPayload = { insights: string[]; next_actions: string[]; highlights: string[] };
@@ -75,6 +80,7 @@ export default function Page() {
       tagline={TAGLINE}
       proofPoints={PROOF_POINTS}
       eyebrow={SURFACE_LABELS.hero}
+      visualSrc={HERO_VISUAL}
     />
   );
   const statsNode = <StatsStrip stats={stats} />;
@@ -103,7 +109,15 @@ export default function Page() {
   const featureNode = (
     <FeaturePanel eyebrow={SURFACE_LABELS.support} title={SUPPORT_TITLE} features={FEATURE_CHIPS} proofPoints={PROOF_POINTS} />
   );
-  const collectionNode = <CollectionPanel eyebrow={SURFACE_LABELS.collection} title={COLLECTION_TITLE} saved={saved} />;
+  const collectionNode = (
+    <CollectionPanel
+      eyebrow={SURFACE_LABELS.collection}
+      title={COLLECTION_TITLE}
+      saved={saved}
+      emptyTitle={EMPTY_COLLECTION_TITLE}
+      emptyDetail={EMPTY_COLLECTION_DETAIL}
+    />
+  );
   const referenceNode = (
     <ReferenceShelf
       eyebrow={SURFACE_LABELS.support}
@@ -111,10 +125,82 @@ export default function Page() {
       items={SAMPLE_ITEMS}
       objects={REFERENCE_OBJECTS}
       tone={UI_COPY_TONE}
+      thumbs={THUMBS}
     />
   );
 
   function renderLayout() {
+    if (DOMAIN_CLASS === "creator-batch-studio") {
+      return (
+        <section className="creator-shell">
+          <div className="creator-topline">
+            <div className="creator-workbench">
+              {workspaceNode}
+              {statsNode}
+            </div>
+            {heroNode}
+          </div>
+          <div className="creator-editorial-stage">
+            <div className="creator-side-rail">
+              {featureNode}
+            </div>
+            <div className="creator-primary-rail">{primaryNode}</div>
+            <div className="creator-library-rail">
+              {referenceNode}
+            </div>
+          </div>
+          <div className="creator-bottomline">
+            <div className="creator-collection-rail">
+              {collectionNode}
+            </div>
+            <div className="creator-proof-rail">{referenceNode}</div>
+          </div>
+        </section>
+      );
+    }
+
+    if (DOMAIN_CLASS === "weekender-route-postcards") {
+      return (
+        <section className="travel-shell">
+          {heroNode}
+          {statsNode}
+          <div className="travel-ribbon">{referenceNode}</div>
+          <div className="travel-planner-grid">
+            <div className="travel-brief-column">{workspaceNode}</div>
+            <div className="travel-result-column">
+              {primaryNode}
+              {collectionNode}
+            </div>
+            <div className="travel-proof-column">
+              {featureNode}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    if (DOMAIN_CLASS === "meal-prep-atlas") {
+      return (
+        <section className="meal-shell">
+          <div className="meal-top-row">
+            {heroNode}
+            <div className="meal-proof-stack">
+              {statsNode}
+              {featureNode}
+            </div>
+          </div>
+          <div className="meal-main-grid">
+            <div className="meal-planner-column">{workspaceNode}</div>
+            <div className="meal-reference-column">{referenceNode}</div>
+          </div>
+          <div className="meal-bottom-row">
+            {primaryNode}
+            {collectionNode}
+          </div>
+        </section>
+      );
+    }
+
     if (LAYOUT === "storyboard") {
       return (
         <>
@@ -243,8 +329,8 @@ export default function Page() {
   }
 
   return (
-    <main className={`page-shell layout-${layoutClass}`}>
+    <main className={`page-shell layout-${layoutClass} domain-${DOMAIN_CLASS}`}>
       {renderLayout()}
     </main>
-  );
+    );
 }

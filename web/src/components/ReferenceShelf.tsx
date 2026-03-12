@@ -4,9 +4,10 @@ type ReferenceShelfProps = {
   items: string[];
   objects: string[];
   tone: string;
+  thumbs: string[];
 };
 
-export default function ReferenceShelf({ eyebrow, title, items, objects, tone }: ReferenceShelfProps) {
+export default function ReferenceShelf({ eyebrow, title, items, objects, tone, thumbs }: ReferenceShelfProps) {
   return (
     <section className="reference-shelf">
       <div className="section-heading">
@@ -17,6 +18,11 @@ export default function ReferenceShelf({ eyebrow, title, items, objects, tone }:
       <div className="reference-grid">
         {items.map((item, index) => (
           <article className="reference-card" key={`${item}-${index}`}>
+            <img
+              className="reference-thumb"
+              src={thumbs[index % Math.max(thumbs.length, 1)] || "/thumb-1.svg"}
+              alt={`${item} visual`}
+            />
             <strong>{item}</strong>
             <span>{objects[index % Math.max(objects.length, 1)] || title}</span>
           </article>

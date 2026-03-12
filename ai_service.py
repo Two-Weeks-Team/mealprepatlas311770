@@ -81,41 +81,67 @@ def _normalize_inference_payload(payload: object) -> dict[str, object]:
 
 
 APP_NAME = "Meal Prep Atlas"
-APP_TAGLINE = "Meal Prep Atlas remote deploy"
-KEY_FEATURES = ["Guided workflow", "Insights panel", "Saved sessions"]
-PROOF_POINTS = ["Shareable outputs", "Visible recent activity", "Clear next actions"]
+APP_TAGLINE = "Build a consumer meal-prep planner that turns a weekly grocery and cooking inspiration video into a prep schedule, groce"
+KEY_FEATURES = ["prep block", "grocery lane", "meal board", "container checklist"]
+PROOF_POINTS = ["weekly prep plan", "organized grocery groups", "saved meal board", "the first fold shows prep objects, not KPIs"]
+REFERENCE_OBJECTS = ["prep block", "grocery lane", "meal board", "container checklist", "recipe slot"]
+SAMPLE_SEED_DATA = ["weekly prep plan", "organized grocery groups", "saved meal board", "Sunday prep block"]
+SURFACE_LABELS = {"hero": "kitchen prep atlas", "workspace": "prep block", "result": "grocery lane", "support": "saved meal boards", "collection": "prep block planner"}
+COLLECTION_TITLE = "Kitchen Prep Atlas stays visible after each run."
+
+
+def _artifact_label(items, index, fallback):
+    if index < len(items) and str(items[index]).strip():
+        return str(items[index]).strip()
+    return fallback
+
+
+def _sentence_case(value: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    return text[0].upper() + text[1:]
 
 
 def build_plan(query: str, preferences: str) -> dict:
     subject = (query or APP_TAGLINE).strip() or APP_NAME
-    guidance = (preferences or "Prioritize a polished live demo with clear momentum.").strip()
+    guidance = (preferences or "Keep the result practical, saveable, and ready to use immediately.").strip()
+    result_labels = SAMPLE_SEED_DATA or PROOF_POINTS or KEY_FEATURES
+    object_labels = REFERENCE_OBJECTS or KEY_FEATURES
     items = []
-    for index, feature in enumerate(KEY_FEATURES[:3], start=1):
+    for index in range(3):
+        object_label = _artifact_label(object_labels, index, f"Step {index + 1}")
+        result_label = _artifact_label(result_labels, index, _artifact_label(PROOF_POINTS, index, "usable output"))
+        partner_label = _artifact_label(object_labels, min(index + 1, len(object_labels) - 1), SURFACE_LABELS.get("collection", "saved result"))
         items.append(
             {
-                "title": f"Stage {index}: {feature}",
-                "detail": f"Apply {feature.lower()} to '{subject}' while respecting: {guidance}.",
-                "score": min(96, 72 + index * 6),
+                "title": _sentence_case(object_label),
+                "detail": f"Shape {result_label.lower()} through {object_label.lower()}, keep {partner_label.lower()} visible, and follow: {guidance}.",
+                "score": min(96, 78 + index * 5),
             }
         )
+    summary_result = _artifact_label(result_labels, 0, "usable output")
+    summary_objects = ", ".join(label.lower() for label in object_labels[:2])
     return {
-        "summary": f"{APP_NAME} shaped '{subject}' into a judge-ready working session.",
+        "summary": f"{APP_NAME} turned '{subject}' into {summary_result.lower()} with {summary_objects} and a reusable {SURFACE_LABELS.get('collection', 'saved result').lower()}.",
         "score": 88,
         "items": items,
     }
 
 
 def build_insights(selection: str, context: str) -> dict:
-    focus = (selection or APP_NAME).strip()
+    focus = (selection or _artifact_label(REFERENCE_OBJECTS, 0, APP_NAME)).strip()
     base_context = (context or APP_TAGLINE).strip()
+    collection_label = SURFACE_LABELS.get("collection", "saved result")
+    support_label = SURFACE_LABELS.get("support", "support rail")
     return {
         "insights": [
-            f"Lead with {focus} so the first screen proves value instantly.",
-            f"Use {base_context} as the narrative thread across the workflow.",
+            f"Lead with {focus} so the first screen proves {_artifact_label(PROOF_POINTS, 0, 'usable value').lower()} immediately.",
+            f"Keep {support_label.lower()} and {collection_label.lower()} visible so the workflow reads like a dedicated product, not a generic tool.",
         ],
         "next_actions": [
-            f"Save the strongest {focus.lower()} output as the demo finale.",
-            "Keep one guided CTA visible at every stage.",
+            f"Save the strongest {collection_label.lower()} after each run.",
+            f"Use {base_context} to refine the next {_artifact_label(REFERENCE_OBJECTS, 1, 'artifact').lower()}.",
         ],
-        "highlights": PROOF_POINTS[:3],
+        "highlights": PROOF_POINTS[:3] or SAMPLE_SEED_DATA[:3],
     }

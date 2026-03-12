@@ -8,10 +8,14 @@ export default function CollectionPanel({
   saved,
   eyebrow,
   title,
+  emptyTitle,
+  emptyDetail,
 }: {
   saved: SavedPlan[];
   eyebrow: string;
   title: string;
+  emptyTitle: string;
+  emptyDetail: string;
 }) {
   return (
     <section className="collection-panel">
@@ -35,9 +39,9 @@ export default function CollectionPanel({
         ) : (
             <article className="saved-card">
               <span className="saved-score">Empty state</span>
-              <h3>Generate the first output</h3>
-              <p>The saved library and recent activity surface will fill after the first successful run.</p>
-          </article>
+              <h3>{emptyTitle}</h3>
+              <p>{emptyDetail}</p>
+           </article>
         )}
       </div>
     </section>
