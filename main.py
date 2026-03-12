@@ -10,4 +10,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def normalize_api_prefix(request: Request, call_next):
+    if request.scope.get("path", "").startswith("/api/"):
+        request.scope["path"] = request.scope["path"][4:] or "/"
+    return await call_next(request)
+
+app.include_router(router)
 app.include_router(router, prefix="/api")
